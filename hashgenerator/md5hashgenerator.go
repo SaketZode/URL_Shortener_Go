@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 )
 
+// Implementation of HashGenerator interface.
 type MD5HashGenerator struct {
 }
 
