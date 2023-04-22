@@ -13,18 +13,26 @@ type DataStore interface {
 }
 
 type Database struct {
-	Data []Data
+	Data map[string]string
+}
+
+func NewDatabase() *Database {
+	return &Database{Data: make(map[string]string)}
 }
 
 func (db *Database) Save(data Data) {
-	db.Data = append(db.Data, data)
+	db.Data[data.EncodedURL] = data.OriginalURL
 }
 
 func (db *Database) Retrive(encodedUrl string) (string, error) {
-	for _, value := range db.Data {
+	/* for _, value := range db.Data {
 		if value.EncodedURL == encodedUrl {
 			return value.OriginalURL, nil
 		}
+	} */
+	value, ok := db.Data[encodedUrl]
+	if !ok {
+		return "", fmt.Errorf("no mapping present for provided short URL")
 	}
-	return "", fmt.Errorf("no mapping present for provided short URL")
+	return value, fmt.Errorf("no mapping present for provided short URL")
 }

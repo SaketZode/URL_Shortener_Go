@@ -24,8 +24,6 @@ func main() {
 		handler.HandleShortUrlRedirect(c)
 	})
 
-	// Note that store initialization happens here
-
 	err := r.Run(":7070")
 	if err != nil {
 		panic(fmt.Sprintf("Failed to start the web server - Error: %v", err))
