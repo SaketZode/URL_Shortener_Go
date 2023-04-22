@@ -25,14 +25,9 @@ func (db *Database) Save(data Data) {
 }
 
 func (db *Database) Retrive(encodedUrl string) (string, error) {
-	/* for _, value := range db.Data {
-		if value.EncodedURL == encodedUrl {
-			return value.OriginalURL, nil
-		}
-	} */
 	value, ok := db.Data[encodedUrl]
 	if !ok {
 		return "", fmt.Errorf("no mapping present for provided short URL")
 	}
-	return value, fmt.Errorf("no mapping present for provided short URL")
+	return value, nil
 }

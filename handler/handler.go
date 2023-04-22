@@ -11,12 +11,12 @@ import (
 
 var (
 	dataStore  store.DataStore
-	urlService service.UrlEncodeService
+	urlService service.UrlService
 )
 
 func init() {
 	dataStore = store.NewDatabase()
-	urlService = &service.UrlEncoder{Store: dataStore}
+	urlService = &service.UrlServiceStruct{Store: dataStore}
 }
 
 func CreateShortUrl(c *gin.Context) {
@@ -36,5 +36,19 @@ func CreateShortUrl(c *gin.Context) {
 	c.JSON(http.StatusOK, encodedUrl)
 }
 
-func HandleShortUrlRedirect(c *gin.Context) {
+func DecodeShortUrl(c *gin.Context) {
+	request := models.DecodingRequest{}
+	err := c.ShouldBindJSON(&request)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.ErrorResponse{
+			Message: err.Error(),
+		})
+		return
+	}
+	decodedResponse, decodingErr := urlService.DecodeURL(request)
+	if decodingErr != nil {
+		c.JSON(http.StatusInternalServerError, decodingErr)
+		return
+	}
+	c.JSON(http.StatusOK, decodedResponse)
 }
