@@ -1,12 +1,13 @@
 package service
 
 import (
-	"crypto/md5"
-	"encoding/hex"
 	"urlshortener/constants"
+	"urlshortener/hashgenerator"
 	"urlshortener/models"
 	"urlshortener/store"
 )
+
+var hash hashgenerator.HashGenerator = &hashgenerator.MD5HashGenerator{}
 
 type UrlService interface {
 	EncodeURL(url models.EncodingRequest) (*models.EncodedUrl, *models.ErrorResponse)
@@ -18,8 +19,7 @@ type UrlServiceStruct struct {
 }
 
 func (urlEncoder *UrlServiceStruct) EncodeURL(url models.EncodingRequest) (*models.EncodedUrl, *models.ErrorResponse) {
-	hash := md5.Sum([]byte(url.OriginalURL))
-	encodedString := constants.BaseURL + hex.EncodeToString(hash[:])
+	encodedString := constants.BaseURL + hash.GenerateHash(url.OriginalURL)
 	urlEncoder.Store.Save(store.Data{OriginalURL: url.OriginalURL, EncodedURL: encodedString})
 	return &models.EncodedUrl{EncodedUrl: encodedString}, nil
 }
